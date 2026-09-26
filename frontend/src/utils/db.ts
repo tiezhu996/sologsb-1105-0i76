@@ -408,10 +408,28 @@ class GboldmapDatabase extends Dexie {
           })
       })
 
+    this.version(3)
+      .stores({
+        sheets: 'id, code, year, scale, status, series',
+        scans: 'id, sheetId, importedAt, quality',
+        placePairs: 'id, sheetId, oldName, newName, placeType, certainty',
+        histories: 'id, placePairId, period, changeType',
+      })
+      .upgrade(async (transaction) => {
+        await transaction
+          .table<PlacePair, string>('placePairs')
+          .toCollection()
+          .modify((pair) => {
+            if (!Array.isArray(pair.newNameList) || pair.newNameList.length === 0) {
+              pair.newNameList = [pair.newName]
+            }
+          })
+      })
+
     this.on('populate', async () => {
       await this.sheets.bulkAdd(sheets)
       await this.scans.bulkAdd(scans)
-      await this.placePairs.bulkAdd(placePairs)
+      await this.placePairs.bulkAdd(placePairs.map((pair) => ({ ...pair, newNameList: [pair.newName] })))
       await this.histories.bulkAdd(histories)
     })
   }

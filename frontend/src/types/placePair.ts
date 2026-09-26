@@ -6,6 +6,7 @@ export interface PlacePair {
   sheetId: string
   oldName: string
   newName: string
+  newNameList?: string[]
   aliasList: string[]
   placeType: PlaceType
   coordNote: string

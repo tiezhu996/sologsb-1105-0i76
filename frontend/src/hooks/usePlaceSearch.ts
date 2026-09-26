@@ -64,9 +64,10 @@ export function usePlaceSearch(keyword: MaybeRefOrGetter<string>) {
     }
 
     return placeStore.pairs.flatMap((pair) => {
+      const newNames = [...new Set([pair.newName, ...(pair.newNameList ?? [])].map((name) => name.trim()).filter(Boolean))]
       const candidates: Array<{ field: PlaceSearchFieldMatch['field']; text: string }> = [
         { field: '古名', text: pair.oldName },
-        { field: '今名', text: pair.newName },
+        ...newNames.map((name) => ({ field: '今名' as const, text: name })),
         ...pair.aliasList.map((alias) => ({ field: '异写' as const, text: alias })),
         { field: '图上方位', text: pair.coordNote },
       ]

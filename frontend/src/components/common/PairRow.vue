@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import type { Certainty, PlacePair } from '../../types/placePair'
 import { splitHighlight } from '../../hooks/usePlaceSearch'
 
@@ -19,6 +20,11 @@ const certaintyType: Record<Certainty, 'success' | 'warning' | 'danger'> = {
   存疑: 'warning',
   待考: 'danger',
 }
+
+const newNames = computed(() => {
+  const names = [props.pair.newName, ...(props.pair.newNameList ?? [])]
+  return [...new Set(names.map((name) => name.trim()).filter(Boolean))]
+})
 
 function highlight(text: string) {
   return splitHighlight(text, props.query)
@@ -41,9 +47,12 @@ function highlight(text: string) {
       <div class="pair-row__name-block">
         <span class="pair-row__label">今地名</span>
         <strong class="pair-row__name pair-row__name--new">
-          <template v-for="(part, index) in highlight(pair.newName)" :key="`new-${index}`">
-            <mark v-if="part.matched">{{ part.text }}</mark>
-            <span v-else>{{ part.text }}</span>
+          <template v-for="(newName, nameIndex) in newNames" :key="newName">
+            <template v-for="(part, index) in highlight(newName)" :key="`new-${nameIndex}-${index}`">
+              <mark v-if="part.matched">{{ part.text }}</mark>
+              <span v-else>{{ part.text }}</span>
+            </template>
+            <span v-if="nameIndex < newNames.length - 1">、</span>
           </template>
         </strong>
       </div>
