@@ -6,6 +6,8 @@ export interface PlacePair {
   sheetId: string
   oldName: string
   newName: string
+  /** 合并重复记录时保留的其他今名（今名不同的一起留着） */
+  newNameAliases: string[]
   aliasList: string[]
   placeType: PlaceType
   coordNote: string

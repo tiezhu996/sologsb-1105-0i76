@@ -680,6 +680,14 @@ textarea.native-field {
   color: var(--moss);
 }
 
+.pair-row__also {
+  display: block;
+  margin-top: 5px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
 .pair-row__arrow {
   color: #aa8c72;
   font-family: Georgia, serif;

@@ -45,6 +45,19 @@ export const useHistoryStore = defineStore('history', () => {
     return history
   }
 
+  /** 地名对照合并时，把被并记录的沿革挪到保留记录上。 */
+  async function reassignHistories(fromPairIds: string[], toPairId: string): Promise<void> {
+    await init()
+    const fromSet = new Set(fromPairIds)
+    if (fromSet.size === 0) {
+      return
+    }
+    await db.histories.where('placePairId').anyOf([...fromSet]).modify({ placePairId: toPairId })
+    histories.value = histories.value.map((history) =>
+      fromSet.has(history.placePairId) ? { ...history, placePairId: toPairId } : history,
+    )
+  }
+
   function getForPair(placePairId: string): NameHistory[] {
     return sortByPeriod(histories.value.filter((history) => history.placePairId === placePairId))
   }
@@ -57,6 +70,7 @@ export const useHistoryStore = defineStore('history', () => {
     init,
     loadFor,
     addHistory,
+    reassignHistories,
     getForPair,
   }
 })

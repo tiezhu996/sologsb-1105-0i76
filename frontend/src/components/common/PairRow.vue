@@ -46,6 +46,17 @@ function highlight(text: string) {
             <span v-else>{{ part.text }}</span>
           </template>
         </strong>
+        <span v-if="pair.newNameAliases.length" class="pair-row__also">
+          又作：
+          <template v-for="(name, nameIndex) in pair.newNameAliases" :key="name">
+            <span>
+              <template v-for="(part, partIndex) in highlight(name)" :key="`also-${nameIndex}-${partIndex}`">
+                <mark v-if="part.matched">{{ part.text }}</mark>
+                <span v-else>{{ part.text }}</span>
+              </template>
+            </span><span v-if="nameIndex < pair.newNameAliases.length - 1">、</span>
+          </template>
+        </span>
       </div>
     </div>
     <div class="pair-row__tags">
